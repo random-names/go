@@ -1,4 +1,4 @@
-package main
+package randomnames
 
 import (
 	"bufio"
@@ -31,9 +31,9 @@ type name struct {
 }
 
 type Options struct {
-	number int
-	real   bool
-	max    float64
+	Number int
+	Real   bool
+	Max    float64
 }
 
 // GetFromDatabase returns random names from the given database or file
@@ -123,7 +123,7 @@ func getRandomNames(data []*name, opt *Options) (names []string) {
 	rand.Seed(int64(time.Now().UnixNano()))
 
 	len := len(data)
-	max := opt.max
+	max := opt.Max
 	maxCummulative := data[len-1].cummulative
 	if max <= 0 || max > maxCummulative {
 		max = maxCummulative
@@ -134,8 +134,11 @@ func getRandomNames(data []*name, opt *Options) (names []string) {
 	}
 
 	var index int
-	for opt.number > 0 {
-		if opt.real {
+	if opt.Number <= 0 {
+		opt.Number = 1
+	}
+	for opt.Number > 0 {
+		if opt.Real {
 			random := rand.Float64() * max
 			index = sort.Search(len, func(i int) bool {
 				return data[i].cummulative > random
@@ -147,7 +150,7 @@ func getRandomNames(data []*name, opt *Options) (names []string) {
 			index = 0
 		}
 		names = append(names, data[index].name)
-		opt.number--
+		opt.Number--
 	}
 	return
 }
