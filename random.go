@@ -31,14 +31,36 @@ type name struct {
 }
 
 type Options struct {
+	Max    float64
 	Number int
 	Real   bool
-	Max    float64
 }
 
-// GetFromDatabase returns random names from the given database or file
+// GetRandomName returns a random name from the given database or file
+func GetRandomName(path string, opt *Options) (string, error) {
+	if opt.Number != 1 {
+		opt.Number = 1
+	}
+
+	names, err := GetRandomNames(path, opt)
+	if err != nil {
+		return "", err
+	}
+	return names[0], nil
+}
+
+// GetRandomNames returns random names from the given database or file
 func GetRandomNames(path string, opt *Options) ([]string, error) {
 	names := []string{}
+
+	if opt.Max > 100 {
+		opt.Max = 100
+	} else if opt.Max < 0 {
+		opt.Max = 0
+	}
+	if opt.Number <= 0 {
+		opt.Number = 1
+	}
 
 	file, err := getFile(path)
 	if err != nil {
@@ -134,9 +156,6 @@ func getRandomNames(data []*name, opt *Options) (names []string) {
 	}
 
 	var index int
-	if opt.Number <= 0 {
-		opt.Number = 1
-	}
 	for opt.Number > 0 {
 		if opt.Real {
 			random := rand.Float64() * max
