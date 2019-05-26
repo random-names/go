@@ -18,17 +18,13 @@ func main() {
 
 	app.Flags = []cli.Flag{
 		cli.IntFlag{
-			Name:  "max, m",
-			Usage: "the maximum of the random number",
-		},
-		cli.IntFlag{
 			Name:  "number, n",
 			Value: 1,
 			Usage: "how many names to generate",
 		},
-		cli.BoolFlag{
-			Name:  "file, f",
-			Usage: "use a custom file as database",
+		cli.Float64Flag{
+			Name:  "max, m",
+			Usage: "the maximum of the random number",
 		},
 		cli.BoolFlag{
 			Name:  "real, r",
@@ -42,7 +38,7 @@ func main() {
 			source = c.Args().Get(0)
 		}
 
-		max := c.Int("max")
+		max := c.Float64("max")
 		if max > 100 {
 			max = 100
 		} else if max < 0 {
@@ -63,11 +59,7 @@ func main() {
 		names := []string{}
 		var err error
 		if source != "" {
-			if c.Bool("file") == true {
-				// names = GetFromDatabase(source, opt)
-			} else {
-				names, err = GetFromFile(source, opt)
-			}
+			names, err = GetRandomNames(source, opt)
 		}
 
 		if err != nil {

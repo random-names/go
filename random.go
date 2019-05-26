@@ -2,16 +2,19 @@ package main
 
 import (
 	"bufio"
+	"go/build"
+	"log"
 	"math/rand"
 	"os"
-	"path"
+	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
 )
 
 const (
-	DATA_BASE_URL = "github.com/random-names/names"
+	DATA_BASE_PATH = "github.com/random-names/names"
 )
 
 const (
@@ -23,32 +26,22 @@ const (
 
 type name struct {
 	name        string
-	weight      float32
-	cummulative float32
+	weight      float64
+	cummulative float64
 	rank        int
 }
 
 type options struct {
 	number int
 	real   bool
-	max    int
+	max    float64
 }
 
-// GetFromDatabase returns random names from the given database
-// func GetFromDatabase(data string, opt *options) ([]string, error) {
-// 	// names = getRandomNames(data, opt)
-// 	return
-// }
-
-// GetFromDatabase returns random names from the given file
-func GetFromFile(filepath string, opt *options) ([]string, error) {
+// GetFromDatabase returns random names from the given database or file
+func GetRandomNames(path string, opt *options) ([]string, error) {
 	names := []string{}
-	wd, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
 
-	file, err := os.Open(path.Join(wd, filepath))
+	file, err := getFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -69,9 +62,42 @@ func GetFromFile(filepath string, opt *options) ([]string, error) {
 	return names, nil
 }
 
+func getFile(path string) (*os.File, error) {
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		gopath = build.Default.GOPATH
+	}
+
+	file, err := os.Open(filepath.Join(gopath, "src", DATA_BASE_PATH, path))
+	log.Println(gopath)
+	log.Println(filepath.Join(gopath, "src", DATA_BASE_PATH, path))
+	if err == nil {
+		return file, nil
+	}
+
+	path, err = filepath.Abs(path)
+	if err != nil {
+		return nil, err
+	}
+
+	file, err = os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
+	return file, err
+}
+
 func getNameStruct(data string) (n *name) {
 	args := strings.Fields(data)
-	// log.Printf("d: %#v,   %d", args, INDEX_NAME)
+	if len(args) < INDEX_RANK+1 {
+		diff := INDEX_RANK + 1 - len(args)
+		for diff > 0 {
+			args = append(args, "0")
+			diff--
+		}
+	}
+
 	n = &name{}
 	n.name = args[INDEX_NAME]
 
@@ -82,12 +108,12 @@ func getNameStruct(data string) (n *name) {
 	if err != nil {
 		value = 0
 	}
-	n.weight = float32(value)
+	n.weight = value
 	value, err = strconv.ParseFloat(args[INDEX_CUMMULATIVE], 32)
 	if err != nil {
 		value = 0
 	}
-	n.cummulative = float32(value)
+	n.cummulative = value
 	intValue, err = strconv.Atoi(args[INDEX_RANK])
 	if err != nil {
 		intValue = 0
@@ -101,24 +127,30 @@ func getRandomNames(data []*name, opt *options) (names []string) {
 
 	len := len(data)
 	max := opt.max
-	if max <= 0 || max > len {
-		max = len - 1
+	maxCummulative := data[len-1].cummulative
+	if max <= 0 || max > maxCummulative {
+		max = maxCummulative
 	}
 	if len <= 0 {
 		names = append(names, "Silly Data")
 		return
 	}
 
-	if opt.real == true {
-		// for _, name := range data {
-
-		// }
-	} else {
-		for opt.number > 0 {
-			index := rand.Intn(max)
-			names = append(names, data[index].name)
-			opt.number--
+	var index int
+	for opt.number > 0 {
+		if opt.real {
+			random := rand.Float64() * max
+			index = sort.Search(len, func(i int) bool {
+				return data[i].cummulative > random
+			})
+		} else {
+			index = rand.Intn(len)
 		}
+		if index < 0 || index >= len {
+			index = 0
+		}
+		names = append(names, data[index].name)
+		opt.number--
 	}
 	return
 }
