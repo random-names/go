@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"go/build"
-	"log"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -69,8 +68,6 @@ func getFile(path string) (*os.File, error) {
 	}
 
 	file, err := os.Open(filepath.Join(gopath, "src", DATA_BASE_PATH, path))
-	log.Println(gopath)
-	log.Println(filepath.Join(gopath, "src", DATA_BASE_PATH, path))
 	if err == nil {
 		return file, nil
 	}
