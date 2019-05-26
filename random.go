@@ -30,14 +30,14 @@ type name struct {
 	rank        int
 }
 
-type options struct {
+type Options struct {
 	number int
 	real   bool
 	max    float64
 }
 
 // GetFromDatabase returns random names from the given database or file
-func GetRandomNames(path string, opt *options) ([]string, error) {
+func GetRandomNames(path string, opt *Options) ([]string, error) {
 	names := []string{}
 
 	file, err := getFile(path)
@@ -119,7 +119,7 @@ func getNameStruct(data string) (n *name) {
 	return
 }
 
-func getRandomNames(data []*name, opt *options) (names []string) {
+func getRandomNames(data []*name, opt *Options) (names []string) {
 	rand.Seed(int64(time.Now().UnixNano()))
 
 	len := len(data)

@@ -50,7 +50,7 @@ func main() {
 			number = 1
 		}
 
-		opt := &options{
+		opt := &Options{
 			max:    max,
 			number: number,
 			real:   c.Bool("real"),
