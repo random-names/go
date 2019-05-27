@@ -36,6 +36,40 @@ func main() {
 
 ```
 
+The above example will return names from `census-90/male.first(also all.last)` database in [names](https://github.com/random-names/names/tree/master/census-90). If you wish to use the database from this repository, get it first!
+
+```
+go get github.com/random-names/names
+```
+
+You can also use database not from this repository. Just pass the relative path:
+
+```go
+name, err := rn.GetRandomName("relative/path/to/database", &rn.Options{})
+```
+
+To get multiple names, switch to `GetRandomNames` and set the number in the option:
+
+```go
+package main
+
+import (
+	"fmt"
+	rn "github.com/random-names/go"
+	"strings"
+)
+
+func main() {
+	lastNames, err := rn.GetRandomNames("census-90/all.last", &rn.Options{Number: 5})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Printf("random last-names: %v \n", strings.Join(lastNames, ", "))
+}
+
+```
+
 #### Running in command line
 
 You should install the `go-rn` binary first. In your `$GOPATH/src/github.com/random-names/go` folder, run the following command:
