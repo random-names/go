@@ -18,16 +18,12 @@ const (
 
 const (
 	INDEX_NAME = iota
-	INDEX_WEIGHT
-	INDEX_CUMMULATIVE
-	INDEX_RANK
+	INDEX_CUMULATIVE
 )
 
 type name struct {
 	name        string
-	weight      float64
-	cummulative float64
-	rank        int
+	cumulative float64
 }
 
 type Options struct {
@@ -109,8 +105,8 @@ func getFile(path string) (*os.File, error) {
 
 func getNameStruct(data string) (n *name) {
 	args := strings.Fields(data)
-	if len(args) < INDEX_RANK+1 {
-		diff := INDEX_RANK + 1 - len(args)
+	if len(args) < INDEX_CUMULATIVE+1 {
+		diff := INDEX_CUMULATIVE + 1 - len(args)
 		for diff > 0 {
 			args = append(args, "0")
 			diff--
@@ -120,24 +116,11 @@ func getNameStruct(data string) (n *name) {
 	n = &name{}
 	n.name = args[INDEX_NAME]
 
-	var value float64
-	var intValue int
-	var err error
-	value, err = strconv.ParseFloat(args[INDEX_WEIGHT], 32)
+	value, err := strconv.ParseFloat(args[INDEX_CUMULATIVE], 32)
 	if err != nil {
 		value = 0
 	}
-	n.weight = value
-	value, err = strconv.ParseFloat(args[INDEX_CUMMULATIVE], 32)
-	if err != nil {
-		value = 0
-	}
-	n.cummulative = value
-	intValue, err = strconv.Atoi(args[INDEX_RANK])
-	if err != nil {
-		intValue = 0
-	}
-	n.rank = intValue
+	n.cumulative = value
 	return
 }
 
@@ -146,9 +129,9 @@ func getRandomNames(data []*name, opt *Options) (names []string) {
 
 	len := len(data)
 	max := opt.Max
-	maxCummulative := data[len-1].cummulative
-	if max <= 0 || max > maxCummulative {
-		max = maxCummulative
+	maxCumulative := data[len-1].cumulative
+	if max <= 0 || max > maxCumulative {
+		max = maxCumulative
 	}
 	if len <= 0 {
 		names = append(names, "Silly Data")
@@ -160,7 +143,7 @@ func getRandomNames(data []*name, opt *Options) (names []string) {
 		if opt.Real {
 			random := rand.Float64() * max
 			index = sort.Search(len, func(i int) bool {
-				return data[i].cummulative > random
+				return data[i].cumulative > random
 			})
 		} else {
 			index = rand.Intn(len)
