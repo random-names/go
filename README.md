@@ -1,6 +1,6 @@
 # go-random-names
 
-A random human names generator written in Golang.
+A random names generator written in Golang.
 
 ### Installation
 
@@ -48,7 +48,7 @@ You can also use database not from this repository. Just pass the relative path:
 name, err := rn.GetRandomName("relative/path/to/database", &rn.Options{})
 ```
 
-To get multiple names, switch to `GetRandomNames` and set the number in the option:
+To get multiple names, switch to **`GetRandomNames`** and specify the option **`Number`**:
 
 ```go
 package main
@@ -69,6 +69,16 @@ func main() {
 }
 
 ```
+
+Want names to be more realistic? You only need to enable the **`Real`** option!
+*Note: Only database provides cumulative percentage of each name support this feature. See [here](https://github.com/random-names/names/tree/master/README.md#database-structure).*
+
+```go
+name, err := rn.GetRandomName("relative/path/to/database", &rn.Options{Real: true})
+```
+
+The last option is **`Max`**, which is used along with `Real`. For example, if you set `Max` to 50 while `Real` enabled, you will always get names those are the most popular 50% ones.
+*Note: You cannot set the value of `Max` larger than the maximum percentage in the database.*
 
 #### Running in command line
 
