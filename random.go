@@ -26,13 +26,17 @@ type name struct {
 	cumulative float64
 }
 
+// Options is the option passed to public functions.
 type Options struct {
-	Max    float64
+	// Max represents the maximum cumulative percentage of names to be generated.
+	Max float64
+	// Number represents the number of names to be generated.
 	Number int
-	Real   bool
+	// Real indicates whether to use realistic percentage to generate names.
+	Real bool
 }
 
-// GetRandomName returns a random name from the given database or file
+// GetRandomName returns a random name from the given database or file.
 func GetRandomName(path string, opt *Options) (string, error) {
 	if opt.Number != 1 {
 		opt.Number = 1
@@ -45,7 +49,7 @@ func GetRandomName(path string, opt *Options) (string, error) {
 	return names[0], nil
 }
 
-// GetRandomNames returns random names from the given database or file
+// GetRandomNames returns random names from the given database or file.
 func GetRandomNames(path string, opt *Options) ([]string, error) {
 	if opt.Max > 100 {
 		opt.Max = 100
