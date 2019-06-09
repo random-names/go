@@ -13,16 +13,16 @@ import (
 )
 
 const (
-	DATA_BASE_PATH = "github.com/random-names/names"
+	dataBasePath = "github.com/random-names/names"
 )
 
 const (
-	INDEX_NAME = iota
-	INDEX_CUMULATIVE
+	indexName = iota
+	indexCumulative
 )
 
 type name struct {
-	name        string
+	name       string
 	cumulative float64
 }
 
@@ -47,8 +47,6 @@ func GetRandomName(path string, opt *Options) (string, error) {
 
 // GetRandomNames returns random names from the given database or file
 func GetRandomNames(path string, opt *Options) ([]string, error) {
-	names := []string{}
-
 	if opt.Max > 100 {
 		opt.Max = 100
 	} else if opt.Max < 0 {
@@ -75,7 +73,7 @@ func GetRandomNames(path string, opt *Options) ([]string, error) {
 		return nil, err
 	}
 
-	names = getRandomNames(data, opt)
+	names := getRandomNames(data, opt)
 	return names, nil
 }
 
@@ -85,7 +83,7 @@ func getFile(path string) (*os.File, error) {
 		gopath = build.Default.GOPATH
 	}
 
-	file, err := os.Open(filepath.Join(gopath, "src", DATA_BASE_PATH, path))
+	file, err := os.Open(filepath.Join(gopath, "src", dataBasePath, path))
 	if err == nil {
 		return file, nil
 	}
@@ -105,8 +103,8 @@ func getFile(path string) (*os.File, error) {
 
 func getNameStruct(data string) (n *name) {
 	args := strings.Fields(data)
-	if len(args) < INDEX_CUMULATIVE+1 {
-		diff := INDEX_CUMULATIVE + 1 - len(args)
+	if len(args) < indexCumulative+1 {
+		diff := indexCumulative + 1 - len(args)
 		for diff > 0 {
 			args = append(args, "0")
 			diff--
@@ -114,9 +112,9 @@ func getNameStruct(data string) (n *name) {
 	}
 
 	n = &name{}
-	n.name = args[INDEX_NAME]
+	n.name = args[indexName]
 
-	value, err := strconv.ParseFloat(args[INDEX_CUMULATIVE], 32)
+	value, err := strconv.ParseFloat(args[indexCumulative], 32)
 	if err != nil {
 		value = 0
 	}

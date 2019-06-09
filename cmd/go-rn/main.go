@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"gopkg.in/urfave/cli.v1"
 	rn "github.com/random-names/go"
+	"gopkg.in/urfave/cli.v1"
 )
 
 func main() {
@@ -38,7 +38,7 @@ func main() {
 		if c.NArg() > 0 {
 			source = c.Args().Get(0)
 		}
-		
+
 		opt := &rn.Options{
 			Max:    c.Float64("max"),
 			Number: c.Int("number"),
