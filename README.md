@@ -1,5 +1,8 @@
 # go-random-names
 
+[![GoDoc](https://godoc.org/github.com/random-names/go?status.svg)](https://godoc.org/github.com/random-names/go)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+
 A random names generator written in Golang.
 
 ### Installation
