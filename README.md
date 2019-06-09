@@ -2,6 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/random-names/go?status.svg)](https://godoc.org/github.com/random-names/go)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/random-names/go)](https://goreportcard.com/report/github.com/random-names/go)
 
 A random names generator written in Golang.
 
